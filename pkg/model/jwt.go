@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// JWTClaims 做为 jwt.claims 类型参数
 type JWTClaims struct {
 	UserId int
 	jwt.StandardClaims
@@ -15,17 +16,17 @@ const (
 	JWTSignMethod                  = "HS256"
 )
 
-func NewJWTClaims(user *User) (jwt.Claims, error) {
+func NewJWTClaims(userId int) (JWTClaims, error) {
 	issueTime := time.Now()
 
 	return JWTClaims{
-		UserId: (*user).Id,
+		UserId: userId,
 		StandardClaims: jwt.StandardClaims{
 			Audience:  "douyin-app",
-			Issuer:    "douyin-api",
+			Issuer:    "douyin-auth",
 			IssuedAt:  issueTime.Unix(),
 			NotBefore: issueTime.Unix(),
-			ExpiresAt: issueTime.Add(JWTTokenDuration).Unix(),
+			// ExpiresAt: 日期由 redis 的过期功能定
 		},
 	}, nil
 }

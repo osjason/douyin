@@ -11,14 +11,8 @@ import (
 )
 
 func TestJWTCreate(t *testing.T) {
-	claims, _ := NewJWTClaims(&User{
-		Id:            0,
-		Name:          "jason",
-		FollowCount:   0,
-		FollowerCount: 0,
-		IsFollow:      false,
-	})
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	claim, _ := NewJWTClaims(0)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
 	ss, err := token.SignedString([]byte("key"))
 	if err != nil {
 		log.Fatalln("生成密钥失败")
@@ -34,7 +28,7 @@ func TestStoreTokenByRedis(t *testing.T) {
 		FollowerCount: 0,
 		IsFollow:      false,
 	}
-	claims, _ := NewJWTClaims(user1)
+	claims, _ := NewJWTClaims(user1.Id)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	ss, err := token.SignedString([]byte("key"))
 	if err != nil {
