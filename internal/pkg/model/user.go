@@ -10,7 +10,7 @@ type User struct {
 }
 
 type UserSecret struct {
-	UserId   int    `bson:"user_id"`
+	UserName string `bson:"username"`
 	Password string `bson:"password"`
 }
 
