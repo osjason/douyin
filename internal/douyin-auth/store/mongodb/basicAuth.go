@@ -2,21 +2,20 @@ package mongodb
 
 import (
 	"context"
-	"douyin-app/pkg/model"
+	"douyin-app/internal/pkg/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	_ "go.mongodb.org/mongo-driver/mongo/options"
-	"strconv"
 )
 
 type BasicAuthStore struct {
 	mgoClient *mongo.Client
 }
 
-func (b BasicAuthStore) Get(ctx context.Context, userId int) (*model.UserSecret, error) {
+func (b BasicAuthStore) Get(ctx context.Context, userName string) (*model.UserSecret, error) {
 	coll := b.mgoClient.Database("user").Collection("secret")
 	var userSecret *model.UserSecret
-	err := coll.FindOne(ctx, bson.D{{"user_id", strconv.Itoa(userId)}}).Decode(userSecret)
+	err := coll.FindOne(ctx, bson.D{{"username", userName}}).Decode(userSecret)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +39,7 @@ func (b BasicAuthStore) Update(ctx context.Context, newUserSecret *model.UserSec
 			"password", newUserSecret.Password,
 		}},
 	}}
-	_, err := coll.UpdateOne(ctx, bson.D{{"user_id", strconv.Itoa(newUserSecret.UserId)}}, updateBson)
+	_, err := coll.UpdateOne(ctx, bson.D{{"username", newUserSecret.UserName}}, updateBson)
 	if err != nil {
 		return err
 	}
@@ -48,9 +47,9 @@ func (b BasicAuthStore) Update(ctx context.Context, newUserSecret *model.UserSec
 
 }
 
-func (b BasicAuthStore) Delete(ctx context.Context, userID int) error {
+func (b BasicAuthStore) Delete(ctx context.Context, userName string) error {
 	coll := b.mgoClient.Database("user").Collection("secret")
-	_, err := coll.DeleteOne(ctx, bson.D{{"user_id", strconv.Itoa(userID)}})
+	_, err := coll.DeleteOne(ctx, bson.D{{"username", userName}})
 	if err != nil {
 		return err
 	}

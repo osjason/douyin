@@ -2,7 +2,7 @@ package redis
 
 import (
 	"context"
-	"douyin-app/pkg/model"
+	"douyin-app/internal/pkg/model"
 	"github.com/go-redis/redis/v8"
 	"strconv"
 )
